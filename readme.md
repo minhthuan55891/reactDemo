@@ -1,3 +1,9 @@
+```refs:
+http://andrewhfarmer.com/react-from-scratch/
+http://andrewhfarmer.com/build-your-own-starter/#0-intro
+
+-----
+
 My Project
 ---
 
