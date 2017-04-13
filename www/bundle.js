@@ -9732,9 +9732,15 @@ var ProductTable = function (_React$Component3) {
   _createClass(ProductTable, [{
     key: 'render',
     value: function render() {
+      var _this4 = this;
+
       var rows = [];
       var lastCategory = null;
+      console.log(this.props.inStockOnly);
       this.props.products.forEach(function (product) {
+        if (product.name.indexOf(_this4.props.filterText) === -1 || !product.stocked && _this4.props.inStockOnly) {
+          return;
+        }
         if (product.category !== lastCategory) {
           rows.push(_react2.default.createElement(ProductCategoryRow, { category: product.category, key: product.category }));
         }
@@ -9777,23 +9783,46 @@ var ProductTable = function (_React$Component3) {
 var SearchBar = function (_React$Component4) {
   _inherits(SearchBar, _React$Component4);
 
-  function SearchBar() {
+  function SearchBar(props) {
     _classCallCheck(this, SearchBar);
 
-    return _possibleConstructorReturn(this, (SearchBar.__proto__ || Object.getPrototypeOf(SearchBar)).apply(this, arguments));
+    var _this5 = _possibleConstructorReturn(this, (SearchBar.__proto__ || Object.getPrototypeOf(SearchBar)).call(this, props));
+
+    _this5.handleFilterTextInputChange = _this5.handleFilterTextInputChange.bind(_this5);
+    _this5.handleInStockInputChange = _this5.handleInStockInputChange.bind(_this5);
+    return _this5;
   }
 
   _createClass(SearchBar, [{
+    key: 'handleFilterTextInputChange',
+    value: function handleFilterTextInputChange(e) {
+      this.props.onFilterTextInput(e.target.value);
+    }
+  }, {
+    key: 'handleInStockInputChange',
+    value: function handleInStockInputChange(e) {
+      this.props.onInStockInput(e.target.checked);
+    }
+  }, {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
         'form',
         null,
-        _react2.default.createElement('input', { type: 'text', placeholder: 'Search...' }),
+        _react2.default.createElement('input', {
+          type: 'text',
+          placeholder: 'Search...',
+          value: this.props.filterText,
+          onChange: this.handleFilterTextInputChange
+        }),
         _react2.default.createElement(
           'p',
           null,
-          _react2.default.createElement('input', { type: 'checkbox' }),
+          _react2.default.createElement('input', {
+            type: 'checkbox',
+            checked: this.props.inStockOnly,
+            onChange: this.handleInStockInputChange
+          }),
           ' ',
           'Only show products in stock'
         )
@@ -9807,20 +9836,52 @@ var SearchBar = function (_React$Component4) {
 var FilterableProductTable = function (_React$Component5) {
   _inherits(FilterableProductTable, _React$Component5);
 
-  function FilterableProductTable() {
+  function FilterableProductTable(props) {
     _classCallCheck(this, FilterableProductTable);
 
-    return _possibleConstructorReturn(this, (FilterableProductTable.__proto__ || Object.getPrototypeOf(FilterableProductTable)).apply(this, arguments));
+    var _this6 = _possibleConstructorReturn(this, (FilterableProductTable.__proto__ || Object.getPrototypeOf(FilterableProductTable)).call(this, props));
+
+    _this6.state = {
+      filterText: '',
+      inStockOnly: false
+    };
+
+    _this6.handleFilterTextInput = _this6.handleFilterTextInput.bind(_this6);
+    _this6.handleInStockInput = _this6.handleInStockInput.bind(_this6);
+    return _this6;
   }
 
   _createClass(FilterableProductTable, [{
+    key: 'handleFilterTextInput',
+    value: function handleFilterTextInput(filterText) {
+      this.setState({
+        filterText: filterText
+      });
+    }
+  }, {
+    key: 'handleInStockInput',
+    value: function handleInStockInput(inStockOnly) {
+      this.setState({
+        inStockOnly: inStockOnly
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
         'div',
         null,
-        _react2.default.createElement(SearchBar, null),
-        _react2.default.createElement(ProductTable, { products: this.props.products })
+        _react2.default.createElement(SearchBar, {
+          filterText: this.state.filterText,
+          inStockOnly: this.state.inStockOnly,
+          onFilterTextInput: this.handleFilterTextInput,
+          onInStockInput: this.handleInStockInput
+        }),
+        _react2.default.createElement(ProductTable, {
+          products: this.props.products,
+          filterText: this.state.filterText,
+          inStockOnly: this.state.inStockOnly
+        })
       );
     }
   }]);
@@ -9829,14 +9890,6 @@ var FilterableProductTable = function (_React$Component5) {
 }(_react2.default.Component);
 
 var products = [{ category: 'Sporting Goods', price: '$49.99', stocked: true, name: 'Football' }, { category: 'Sporting Goods', price: '$9.99', stocked: true, name: 'Baseball' }, { category: 'Sporting Goods', price: '$29.99', stocked: false, name: 'Basketball' }, { category: 'Electronics', price: '$99.99', stocked: true, name: 'iPod Touch' }, { category: 'Electronics', price: '$399.99', stocked: false, name: 'iPhone 5' }, { category: 'Electronics', price: '$199.99', stocked: true, name: 'Nexus 7' }];
-
-// ReactDOM.render(
-//   <FilterableProductTable products={PRODUCTS} />,
-//   document.getElementById('container')
-// );
-
-
-// export default FilterableProductTable;
 
 exports.products = products;
 exports.FilterableProductTable = FilterableProductTable;
